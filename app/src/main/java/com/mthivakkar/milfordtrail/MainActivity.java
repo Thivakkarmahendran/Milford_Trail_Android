@@ -1,7 +1,11 @@
 package com.mthivakkar.milfordtrail;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -39,6 +43,16 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
+        else{
+            // Write you code here if permission already given.
+        }
+
 
         KontaktSDK.initialize("uONVvSjhWhXtcRiHMqaQHzxMQBRXBnRK");
 
@@ -187,10 +201,45 @@ public class MainActivity extends AppCompatActivity {
 
     private void speechtoText(String currStop){
 
+        speech_Content speechCont = new speech_Content();
 
-        speechSynthesizer.speak(currStop, TextToSpeech.QUEUE_ADD, null);
+        switch (currStop){
 
-        Log.i("speech", currStop);
+            case "Stop 1":
+                speechSynthesizer.speak(speechCont.stop1Text, TextToSpeech.QUEUE_ADD, null);
+                break;
+            case "Stop 2":
+                speechSynthesizer.speak(speechCont.stop2Text, TextToSpeech.QUEUE_ADD, null);
+                break;
+            case "Stop 3":
+                speechSynthesizer.speak(speechCont.stop3Text, TextToSpeech.QUEUE_ADD, null);
+                break;
+            case "Stop 4":
+                speechSynthesizer.speak(speechCont.stop4Text, TextToSpeech.QUEUE_ADD, null);
+                break;
+            case "Stop 5":
+                speechSynthesizer.speak(speechCont.stop5Text, TextToSpeech.QUEUE_ADD, null);
+                break;
+            case "Stop 6":
+                speechSynthesizer.speak(speechCont.stop6Text, TextToSpeech.QUEUE_ADD, null);
+                break;
+            case "Stop 7":
+                speechSynthesizer.speak(speechCont.stop7Text, TextToSpeech.QUEUE_ADD, null);
+                break;
+            case "Stop 8":
+                speechSynthesizer.speak(speechCont.stop8Text, TextToSpeech.QUEUE_ADD, null);
+                break;
+            case "Stop 9":
+                speechSynthesizer.speak(speechCont.stop9Text, TextToSpeech.QUEUE_ADD, null);
+                break;
+            case "Stop 10":
+                speechSynthesizer.speak(speechCont.stop10Text, TextToSpeech.QUEUE_ADD, null);
+                break;
+
+
+        }
+
+
     }
 
 
