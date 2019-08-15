@@ -9,6 +9,10 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kontakt.sdk.android.ble.connection.OnServiceReadyListener;
 import com.kontakt.sdk.android.ble.manager.ProximityManager;
@@ -38,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
     public TextToSpeech speechSynthesizer;
 
+    TextView currentStopLabel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
         else{
             // Write you code here if permission already given.
         }
+
+        currentStopLabel  = (TextView)findViewById(R.id.currentStop);
 
 
         KontaktSDK.initialize("uONVvSjhWhXtcRiHMqaQHzxMQBRXBnRK");
@@ -69,7 +77,53 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+
+
+        Button stopButton = (Button) findViewById(R.id.stop);
+
+        stopButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                speechSynthesizer.stop();
+            }
+        });
+
+
+
+
     }
+
+
+    @Override
+    protected void onDestroy() {
+        proximityManager.disconnect();
+        proximityManager = null;
+
+        if (speechSynthesizer != null) {
+            speechSynthesizer.stop();
+            speechSynthesizer.shutdown();
+        }
+
+        Toast.makeText(getApplicationContext(),"App destroyed",Toast.LENGTH_SHORT).show();
+
+        super.onDestroy();
+    }
+
+
+    @Override
+    protected  void onPause(){
+        if (speechSynthesizer != null) {
+            speechSynthesizer.stop();
+            speechSynthesizer.shutdown();
+        }
+
+        Toast.makeText(getApplicationContext(),"App paused",Toast.LENGTH_SHORT).show();
+
+        super.onPause();
+    }
+
+
 
 
     @Override
@@ -86,12 +140,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    protected void onDestroy() {
-        proximityManager.disconnect();
-        proximityManager = null;
-        super.onDestroy();
-    }
+
 
     private void startScanning() {
         proximityManager.connect(new OnServiceReadyListener() {
@@ -186,14 +235,24 @@ public class MainActivity extends AppCompatActivity {
             counter = counter + 2;
             CurrentStopText = "Stop " + counter;
 
+            currentStopLabel.setText("Next: " + CurrentStopText);
+
         }
         else if(beacons.contains(CurrentStopText)){
 
             speechtoText(CurrentStopText);
 
-            counter++;
-            CurrentStopText = "Stop " + counter;
+            if(CurrentStopText.equals("Stop 10")){
+                currentStopLabel.setText("End of tour!");
+            }
 
+            else {
+
+                counter++;
+                CurrentStopText = "Stop " + counter;
+
+                currentStopLabel.setText("Next: " + CurrentStopText);
+            }
 
         }
 
